@@ -1,27 +1,38 @@
 package com.poc.parquetdemo.controller;
 
 
+import com.poc.parquetdemo.dto.User;
 import com.poc.parquetdemo.service.ReportService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
 @RestController
 @RequestMapping("/v1/report")
 @RequiredArgsConstructor
+@Log
 public class ReportController {
 
     private final ReportService reportService;
 
-    @GetMapping( value = "/health", produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping( value = "/health", produces = APPLICATION_XML_VALUE)
     public ResponseEntity<String> health(){
         return ResponseEntity.ok().body("<Health>" +
                 "OK" +
                 "</Health>");
     }
 
-    @GetMapping( produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping( value = "/record", produces = APPLICATION_XML_VALUE)
+    public ResponseEntity<?> record(){
+
+        Object result = reportService.record();
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping( produces = APPLICATION_XML_VALUE)
     public ResponseEntity<?> report(
             @RequestParam("limit") long limit,
             @RequestParam("page") long page){
@@ -29,14 +40,15 @@ public class ReportController {
         return ResponseEntity.ok().body(result);
     }
 
-    @PostMapping( produces = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping( consumes = APPLICATION_XML_VALUE)
     public ResponseEntity<?> create(
-            @RequestBody Object o){
-        Object result = reportService.create(o);
+            @RequestBody User user){
+        log.info("user create request : "+ user);
+        Object result = reportService.create(user);
         return ResponseEntity.ok().body(result);
     }
 
-    @PutMapping( value = "{id}", produces = MediaType.APPLICATION_XML_VALUE)
+    @PutMapping( value = "{id}", produces = APPLICATION_XML_VALUE)
     public ResponseEntity<?> update(
             @PathVariable("id") long id,
             @RequestBody Object o){
@@ -44,7 +56,7 @@ public class ReportController {
         return ResponseEntity.ok().body(result);
     }
 
-    @DeleteMapping( value = "{id}", produces = MediaType.APPLICATION_XML_VALUE)
+    @DeleteMapping( value = "{id}", produces = APPLICATION_XML_VALUE)
     public ResponseEntity<?> delete(
             @PathVariable("id") long id){
         Object result = reportService.delete(id);

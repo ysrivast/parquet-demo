@@ -1,14 +1,14 @@
 package com.poc.parquetdemo.writer;
 
+import com.poc.parquetdemo.dto.User;
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.hadoop.ParquetWriter;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.apache.parquet.schema.MessageType;
 
 import java.io.IOException;
-import java.util.List;
 
-public class CustomParquetWriter extends ParquetWriter<List<String>> {
+public class CustomParquetWriter extends ParquetWriter<User> {
 
     public CustomParquetWriter(
             Path file,

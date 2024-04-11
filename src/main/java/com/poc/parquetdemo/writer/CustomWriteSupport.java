@@ -1,5 +1,6 @@
 package com.poc.parquetdemo.writer;
 
+import com.poc.parquetdemo.dto.User;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.parquet.column.ColumnDescriptor;
 import org.apache.parquet.hadoop.api.WriteSupport;
@@ -11,12 +12,11 @@ import org.apache.parquet.schema.MessageType;
 import java.util.HashMap;
 import java.util.List;
 
-public class CustomWriteSupport extends WriteSupport<List<String>> {
+public class CustomWriteSupport extends WriteSupport<User> {
     MessageType schema;
     RecordConsumer recordConsumer;
     List<ColumnDescriptor> cols;
 
-    // TODO: support specifying encodings and compression
     CustomWriteSupport(MessageType schema) {
         this.schema = schema;
         this.cols = schema.getColumns();
@@ -33,19 +33,23 @@ public class CustomWriteSupport extends WriteSupport<List<String>> {
     }
 
     @Override
-    public void write(List<String> values) {
-        if (values.size() != cols.size()) {
-            throw new ParquetEncodingException("Invalid input data. Expecting " +
-                    cols.size() + " columns. Input had " + values.size() + " columns (" + cols + ") : " + values);
-        }
+    public void write(User user) {
 
+        if (user==null) {
+            throw new ParquetEncodingException("Invalid input data. Expecting " +
+                    cols.size() + " columns. Input had " + user + " columns (" + cols + ") : " + user);
+        }
         recordConsumer.startMessage();
-        for (int i = 0; i < cols.size(); ++i) {
-            String val = values.get(i);
-            // val.length() == 0 indicates a NULL value.
-            if (val.length() > 0) {
-                recordConsumer.startField(cols.get(i).getPath()[0], i);
-                switch (cols.get(i).getType()) {
+        int col=0;
+        writeRecord(col++, String.valueOf(user.getId()));
+        writeRecord(col++, String.valueOf(user.getUsername()));
+        writeRecord(col, String.valueOf(user.getActive()));
+        recordConsumer.endMessage();
+
+    }
+    void writeRecord(int col, String val){
+        recordConsumer.startField(cols.get(col).getPath()[0], col);
+        switch (cols.get(col).getType()) {
                     case BOOLEAN:
                         recordConsumer.addBoolean(Boolean.parseBoolean(val));
                         break;
@@ -66,12 +70,9 @@ public class CustomWriteSupport extends WriteSupport<List<String>> {
                         break;
                     default:
                         throw new ParquetEncodingException(
-                                "Unsupported column type: " + cols.get(i).getType());
+                                "Unsupported column type: " + cols.get(col).getType());
                 }
-                recordConsumer.endField(cols.get(i).getPath()[0], i);
-            }
-        }
-        recordConsumer.endMessage();
+        recordConsumer.endField(cols.get(col).getPath()[0], col);
     }
 
     private Binary stringToBinary(Object value) {
