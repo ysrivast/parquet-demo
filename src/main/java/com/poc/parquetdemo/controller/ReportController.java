@@ -2,6 +2,7 @@ package com.poc.parquetdemo.controller;
 
 
 import com.poc.parquetdemo.dto.User;
+import com.poc.parquetdemo.dto.UserList;
 import com.poc.parquetdemo.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -33,10 +34,10 @@ public class ReportController {
     }
 
     @GetMapping( produces = APPLICATION_XML_VALUE)
-    public ResponseEntity<?> report(
+    public ResponseEntity<UserList> report(
             @RequestParam("limit") long limit,
             @RequestParam("page") long page){
-        Object result = reportService.getResult(page, limit);
+        UserList result = reportService.getResult(page, limit);
         return ResponseEntity.ok().body(result);
     }
 

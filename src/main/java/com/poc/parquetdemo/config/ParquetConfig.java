@@ -43,14 +43,17 @@ public class ParquetConfig {
         return MessageTypeParser.parseMessageType(rawSchema);
     }
 
-    @Bean
-    public CustomParquetReader customParquetReader() throws IOException {
+
+    public static CustomParquetReader customParquetReader() throws IOException {
         org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
         String outputFilePath = "C:\\workspace\\parquet-demo\\output\\1712816142131.parquet";
         File outputParquetFile = new File(outputFilePath);
         Path path = new Path(outputParquetFile.toURI().toString());
         ParquetMetadata readFooter = ParquetFileReader.readFooter(conf, path, ParquetMetadataConverter.NO_FILTER);
-        MessageType schema = getSchemaForParquetFile();
+        File resource = new File("C:\\workspace\\parquet-demo\\src\\main\\resources\\schemas\\user.schema");
+        System.err.println("error1234 :- " +resource.toPath());
+        String rawSchema = new String(Files.readAllBytes(resource.toPath()));
+        MessageType schema = MessageTypeParser.parseMessageType(rawSchema);
         return new CustomParquetReader(conf, path,readFooter.getBlocks(), schema);
     }
 }

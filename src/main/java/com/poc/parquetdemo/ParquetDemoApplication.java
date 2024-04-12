@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.List;
+import java.util.stream.LongStream;
 
 @SpringBootApplication
 public class ParquetDemoApplication implements CommandLineRunner {
@@ -21,6 +22,9 @@ public class ParquetDemoApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+
+		LongStream.range(0,100).mapToObj(e-> new User(e,"Parquet-"+e, e%3==0))
+				.forEach(e-> reportService.create(e));
 		List<User> users =
 				List.of(
 						new User(1l,"Alpha", true),

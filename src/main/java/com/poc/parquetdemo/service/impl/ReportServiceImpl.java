@@ -1,6 +1,8 @@
 package com.poc.parquetdemo.service.impl;
 
+import com.poc.parquetdemo.config.ParquetConfig;
 import com.poc.parquetdemo.dto.User;
+import com.poc.parquetdemo.dto.UserList;
 import com.poc.parquetdemo.reader.CustomParquetReader;
 import com.poc.parquetdemo.service.ReportService;
 import com.poc.parquetdemo.writer.CustomParquetWriter;
@@ -18,11 +20,17 @@ public class ReportServiceImpl implements ReportService {
 
     private final CustomParquetWriter customParquetWriter;
 
-    private  final CustomParquetReader customParquetReader;
+//    private  final CustomParquetReader customParquetReader;
 
     @Override
-    public Object getResult(long page, long limit) {
-        return null;
+    public UserList getResult(long page, long limit) {
+        CustomParquetReader customParquetReader = null;
+        try {
+            customParquetReader = ParquetConfig.customParquetReader();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return new UserList(customParquetReader.read());
     }
 
     @Override
@@ -48,7 +56,13 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Object record() {
-        customParquetReader.read();
+        CustomParquetReader customParquetReader = null;
+        try {
+            customParquetReader = ParquetConfig.customParquetReader();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        customParquetReader.print();
         return "OK";
     }
 }

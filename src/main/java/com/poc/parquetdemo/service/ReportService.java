@@ -1,9 +1,10 @@
 package com.poc.parquetdemo.service;
 
 import com.poc.parquetdemo.dto.User;
+import com.poc.parquetdemo.dto.UserList;
 
 public interface ReportService {
-    Object getResult(long page, long limit);
+    UserList getResult(long page, long limit);
 
     Object create(User user);
 
