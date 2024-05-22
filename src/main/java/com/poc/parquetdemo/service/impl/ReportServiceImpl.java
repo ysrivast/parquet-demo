@@ -5,6 +5,7 @@ import com.poc.parquetdemo.dto.User;
 import com.poc.parquetdemo.dto.UserList;
 import com.poc.parquetdemo.reader.CustomParquetReader;
 import com.poc.parquetdemo.service.ReportService;
+import com.poc.parquetdemo.util.ParquetUtil;
 import com.poc.parquetdemo.writer.CustomParquetWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -18,7 +19,7 @@ import java.io.IOException;
 public class ReportServiceImpl implements ReportService {
 
 
-    private final CustomParquetWriter customParquetWriter;
+//    private final CustomParquetWriter customParquetWriter;
 
 //    private  final CustomParquetReader customParquetReader;
 
@@ -31,12 +32,13 @@ public class ReportServiceImpl implements ReportService {
             throw new RuntimeException(e);
         }
         return new UserList(customParquetReader.read());
+//        return null;
     }
 
     @Override
     public Object create(User user) {
         try {
-            customParquetWriter.write(user);
+            ParquetUtil.writeToParquet(user);
         } catch (IOException e) {
             log.severe("error occured : " +e.getMessage());
             log.severe(e.toString());
@@ -56,13 +58,11 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Object record() {
-        CustomParquetReader customParquetReader = null;
         try {
-            customParquetReader = ParquetConfig.customParquetReader();
+            ParquetUtil.readFromParquet();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        customParquetReader.print();
         return "OK";
     }
 }

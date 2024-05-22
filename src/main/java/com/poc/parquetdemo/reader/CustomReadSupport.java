@@ -19,7 +19,7 @@ public class CustomReadSupport extends ReadSupport<User> {
     List<ColumnDescriptor> cols;
     private final ReadSupport<User> wrapped;
 
-    CustomReadSupport(MessageType schema, ReadSupport<User> readSupport) {
+    public CustomReadSupport(MessageType schema, ReadSupport<User> readSupport) {
         this.schema = schema;
         this.cols = schema.getColumns();
         this.wrapped = readSupport;

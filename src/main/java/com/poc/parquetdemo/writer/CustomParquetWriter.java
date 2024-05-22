@@ -16,6 +16,7 @@ public class CustomParquetWriter extends ParquetWriter<User> {
             boolean enableDictionary,
             CompressionCodecName codecName
     ) throws IOException {
+
         super(file, new CustomWriteSupport(schema), codecName, DEFAULT_BLOCK_SIZE, DEFAULT_PAGE_SIZE, enableDictionary, false);
     }
 }

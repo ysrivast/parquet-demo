@@ -17,7 +17,7 @@ public class CustomWriteSupport extends WriteSupport<User> {
     RecordConsumer recordConsumer;
     List<ColumnDescriptor> cols;
 
-    CustomWriteSupport(MessageType schema) {
+    public CustomWriteSupport(MessageType schema) {
         this.schema = schema;
         this.cols = schema.getColumns();
     }
